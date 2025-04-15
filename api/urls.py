@@ -1,5 +1,5 @@
 """
-URL configuration for personal_website project.
+URL configuration for api app.
 
 The `urlpatterns` list routes URLs to views. For more information please see:
     https://docs.djangoproject.com/en/5.1/topics/http/urls/
@@ -15,11 +15,12 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 
-from django.contrib import admin
-from django.urls import include, path
+from django.urls import path
+
+from . import views
+
+app_name = "api"
 
 urlpatterns = [
-    path("admin/", admin.site.urls),
-    path("api/", include("api.urls", namespace="api")),
-    path("", include("personal_profile.urls", namespace="personal_profile")),
+    path("render_markdown/", views.render_markdown, name="render_markdown"),
 ]
