@@ -1,0 +1,6 @@
+django
+pytest
+pytest-django
+bleach
+markdown
+whitenoise
