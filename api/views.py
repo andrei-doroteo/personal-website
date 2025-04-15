@@ -1,15 +1,13 @@
 import bleach
 import markdown
-from django.http import HttpRequest, HttpResponse
-from django.shortcuts import render
-from django.views.decorators.http import require_POST
+from django.http import HttpRequest, HttpResponse, JsonResponse
 
 # Create your views here.
 
 
-@require_POST
 def render_markdown(request: HttpRequest) -> HttpResponse:
     """renders given Markdown code to HTML
+    !!! TODO
 
     Args:
         request (HttpRequest): POST request with markdown code
@@ -22,6 +20,48 @@ def render_markdown(request: HttpRequest) -> HttpResponse:
     prevent cross site scripting.
     """
 
-    # TODO
+    # This is a temporary response as the implementation of this
+    # endpoint is not complete and requires major bug fixes
+    return JsonResponse(
+        {"error": "Endpoint Not Implemented"},
+        status=405,
+        content_type="application/json",
+    )
 
-    return HttpResponse("Stub")  # stub
+    if request.method != "POST":
+        return JsonResponse(
+            {"error": "Invalid Request Type"},
+            status=405,
+            content_type="application/json",
+        )
+
+    md = request.body.decode()
+    html = markdown.markdown(md, extensions=["fenced_code", "sane_lists"])
+
+    allowed__tags = [
+        "h1",
+        "h2",
+        "h3",
+        "h4",
+        "h5",
+        "h6",
+        "p",
+        "code",
+        "pre",
+        "ol",
+        "li",
+        "ul",
+        "blockquote",
+        "a",
+        "img",
+        "div",
+        "strong",
+        "em",
+    ]
+    allowed_attributes = {}
+
+    sanitised_html = bleach.clean(
+        html, tags=allowed__tags, attributes=allowed_attributes
+    )
+
+    return HttpResponse(sanitised_html)
